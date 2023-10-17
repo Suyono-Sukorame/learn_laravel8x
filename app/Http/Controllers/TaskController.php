@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,21 +20,32 @@ class TaskController extends Controller
         if ($request->search) {
             $tasks = DB::table('tasks')
                 ->where('task', 'LIKE', "%$request->search%")
-                ->get();
-                return $tasks;
+                ->paginate(3);
+
+                return view('task.index', [
+                    'data' => $tasks
+                ]);
+
         }
-        $tasks = Task::all();
-        return $tasks;        
+        $tasks = Task::paginate(3);
+        return view('task.index', [
+            'data' => $tasks
+        ]);        
+    }
+
+    public function create() 
+    {
+        return view('task.create');
     }
     
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        Task::create([
+            Task::create([
             'task' => $request->task,
             'user' => $request->user
         ]);
 
-        return 'Success';
+        return redirect('/tasks');
     }
 
     public function show($id)
@@ -43,22 +54,27 @@ class TaskController extends Controller
         return $task;
     }
 
-    public function update(Request $request, $id)
+    public function edit($id) 
+    {
+        $task = Task::find($id);
+        return view('task.edit', compact('task'));
+    }
+
+    public function update(TaskRequest $request, $id)
     {
         $task = Task::find($id);
         $task->update([
             'task' => $request->task,
             'user' => $request->user
         ]);
-        return 'Success';
+
+        return redirect('/tasks');
     }
 
     public function destroy($id)
     {
-        $task = Task::find($id);
-        
+        $task = Task::findOrFail($id);
         $task->delete();
-
-        return 'Success';
+        return redirect('/tasks')->with('success', 'Tugas berhasil dihapus');
     }
 }
