@@ -9,11 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
-    private $taskList = [
-        'first' => 'Sleep',
-        'second' => 'Eat',
-        'third' => 'Work',
-    ];
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('verified');
+        $this->middleware('is_admin');
+    }
+    
+    // private $taskList = [
+    //     'first' => 'Sleep',
+    //     'second' => 'Eat',
+    //     'third' => 'Work',
+    // ];
 
     public function index(Request $request)
     {

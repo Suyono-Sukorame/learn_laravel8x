@@ -17,11 +17,21 @@
                 @csrf @method('PATCH')
                 <div class="mb-3">
                     <label for="" class="form-label">User</label>
-                    <input name="user" type="text" class="form-control" value="{{ $task->user }}">
+                    <input name="user" type="text" class="form-control" value="{{ old('task', $task->user) }}">
+                    @error('user')
+                    <span class="text-danger">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="" class="form-label">Task</label>
-                    <textarea name="task" class="form-control" id="" rows="3">{{ $task->task }}</textarea>
+                    <textarea name="task" class="form-control" id="" rows="3">{{ old('task', $task->task) }}</textarea>
+                    @error('task')
+                    <span class="text-danger">
+                        {{ $message }}
+                    </span>
+                    @enderror
                 </div>
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
